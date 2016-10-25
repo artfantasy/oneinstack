@@ -80,7 +80,7 @@ proxy_set_header X-Real-IP \$remote_addr;
 proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
 EOF
   sed -i "s@/data/wwwroot/default@$wwwroot_dir/default@" $tengine_install_dir/conf/nginx.conf
-  sed -i "s@/data/wwwlogs@$wwwlogs_dir@g" $tengine_install_dir/conf/nginx.conf
+  sed -i "s@/data/logswww@$logswww_dir@g" $tengine_install_dir/conf/nginx.conf
   sed -i "s@^user www www@user $run_user $run_user@" $tengine_install_dir/conf/nginx.conf
   [ "$je_tc_malloc" == '2' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $tengine_install_dir/conf/nginx.conf
   uname -r | awk -F'.' '{if ($1$2>=39)S=0;else S=1}{exit S}' && [ -z "`grep 'reuse_port on;' $tengine_install_dir/conf/nginx.conf`" ] && sed -i "s@worker_connections 51200;@worker_connections 51200;\n    reuse_port on;@" $tengine_install_dir/conf/nginx.conf
@@ -90,7 +90,7 @@ EOF
   
   # logrotate nginx log
   cat > /etc/logrotate.d/nginx << EOF
-$wwwlogs_dir/*nginx.log {
+$logswww_dir/*nginx.log {
 daily
 rotate 5
 missingok

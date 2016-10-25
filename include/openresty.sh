@@ -79,13 +79,13 @@ proxy_set_header X-Real-IP \$remote_addr;
 proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
 EOF
   sed -i "s@/data/wwwroot/default@$wwwroot_dir/default@" $openresty_install_dir/nginx/conf/nginx.conf
-  sed -i "s@/data/wwwlogs@$wwwlogs_dir@g" $openresty_install_dir/nginx/conf/nginx.conf
+  sed -i "s@/data/logswww@$logswww_dir@g" $openresty_install_dir/nginx/conf/nginx.conf
   sed -i "s@^user www www@user $run_user $run_user@" $openresty_install_dir/nginx/conf/nginx.conf
   [ "$je_tc_malloc" == '2' ] && sed -i 's@^pid\(.*\)@pid\1\ngoogle_perftools_profiles /tmp/tcmalloc;@' $openresty_install_dir/nginx/conf/nginx.conf
   
   # logrotate nginx log
   cat > /etc/logrotate.d/nginx << EOF
-$wwwlogs_dir/*nginx.log {
+$logswww_dir/*nginx.log {
 daily
 rotate 5
 missingok

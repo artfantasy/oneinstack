@@ -72,7 +72,7 @@ Install_Apache-2-4() {
   
   #logrotate apache log
   cat > /etc/logrotate.d/apache << EOF
-$wwwlogs_dir/*apache.log {
+$logswww_dir/*apache.log {
 daily
 rotate 5
 missingok
@@ -92,8 +92,8 @@ EOF
     ServerAdmin admin@linuxeye.com
     DocumentRoot "$wwwroot_dir/default"
     ServerName $TMP_IP
-    ErrorLog "$wwwlogs_dir/error_apache.log"
-    CustomLog "$wwwlogs_dir/access_apache.log" common
+    ErrorLog "$logswww_dir/error_apache.log"
+    CustomLog "$logswww_dir/access_apache.log" common
 <Directory "$wwwroot_dir/default">
     SetOutputFilter DEFLATE
     Options FollowSymLinks ExecCGI

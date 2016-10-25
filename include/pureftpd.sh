@@ -17,7 +17,7 @@ Install_PureFTPd() {
   tar xzf pure-ftpd-$pureftpd_version.tar.gz
   pushd pure-ftpd-$pureftpd_version
   [ ! -d "$pureftpd_install_dir" ] && mkdir -p $pureftpd_install_dir
-  ./configure --prefix=$pureftpd_install_dir CFLAGS=-O2 --with-puredb --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg  --with-throttling --with-uploadscript --with-language=english --with-rfc2640
+  ./configure --prefix=$pureftpd_install_dir CFLAGS=-O2 --with-puredb --with-quotas --with-cookie --with-virtualhosts --with-virtualchroot --with-diraliases --with-sysquotas --with-ratios --with-altlog --with-paranoidmsg --with-shadow --with-welcomemsg  --with-throttling --with-uploadscript --with-language=english --with-rfc2640 --with-tls --with-certfile=$pureftpd_install_dir/etc/ssl/private/pure-ftpd.pem
   make -j ${THREAD} && make install
   if [ -e "$pureftpd_install_dir/sbin/pure-ftpwho" ]; then
     echo "${CSUCCESS}Pure-Ftp installed successfully! ${CEND}"
@@ -43,15 +43,15 @@ Install_PureFTPd() {
 
     # iptables Ftp
     if [ "$OS" == 'CentOS' ]; then
-      if [ -z "`grep '20000:30000' /etc/sysconfig/iptables`" ]; then
-        iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
-        iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+      if [ -z "`grep '44447:44456' /etc/sysconfig/iptables`" ]; then
+        iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 44446 -j ACCEPT
+        iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 44447:44456 -j ACCEPT
         service iptables save
       fi
     elif [[ $OS =~ ^Ubuntu$|^Debian$ ]]; then
-      if [ -z "`grep '20000:30000' /etc/iptables.up.rules`" ]; then
-        iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT
-        iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 20000:30000 -j ACCEPT
+      if [ -z "`grep '44447:44456' /etc/iptables.up.rules`" ]; then
+        iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 44446 -j ACCEPT
+        iptables -I INPUT 6 -p tcp -m state --state NEW -m tcp --dport 44447:44456 -j ACCEPT
         iptables-save > /etc/iptables.up.rules
       fi
     fi

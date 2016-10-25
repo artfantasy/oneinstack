@@ -429,8 +429,8 @@ Nginx_log() {
   if [ "$access_yn" == 'n' ]; then
     N_log="access_log off;"
   else
-    N_log="access_log $wwwlogs_dir/${domain}_nginx.log combined;"
-    echo "You access log file=${CMSG}$wwwlogs_dir/${domain}_nginx.log${CEND}"
+    N_log="access_log $logswww_dir/${domain}_nginx.log combined;"
+    echo "You access log file=${CMSG}$logswww_dir/${domain}_nginx.log${CEND}"
   fi
 }
 
@@ -583,8 +583,8 @@ Apache_log() {
   if [ "$access_yn" == 'n' ]; then
     A_log='CustomLog "/dev/null" common'
   else
-    A_log="CustomLog \"$wwwlogs_dir/${domain}_apache.log\" common"
-    echo "You access log file=$wwwlogs_dir/${domain}_apache.log"
+    A_log="CustomLog \"$logswww_dir/${domain}_apache.log\" common"
+    echo "You access log file=$logswww_dir/${domain}_apache.log"
   fi
 }
 
@@ -597,7 +597,7 @@ Create_apache_conf() {
     DocumentRoot "$vhostdir"
     ServerName $domain
     $Apache_Domain_alias
-    ErrorLog "$wwwlogs_dir/${domain}_error_apache.log"
+    ErrorLog "$logswww_dir/${domain}_error_apache.log"
     $A_log
 <Directory "$vhostdir">
     SetOutputFilter DEFLATE
@@ -617,7 +617,7 @@ EOF
     ServerName $domain
     $Apache_Domain_alias
     $Apache_SSL
-    ErrorLog "$wwwlogs_dir/${domain}_error_apache.log"
+    ErrorLog "$logswww_dir/${domain}_error_apache.log"
     $A_log
 <Directory "$vhostdir">
     SetOutputFilter DEFLATE
@@ -709,7 +709,7 @@ EOF
     ServerName $domain
     $Apache_Domain_alias
     $Apache_SSL
-    ErrorLog "$wwwlogs_dir/${domain}_error_apache.log"
+    ErrorLog "$logswww_dir/${domain}_error_apache.log"
     $A_log
 <Directory "$vhostdir">
     SetOutputFilter DEFLATE

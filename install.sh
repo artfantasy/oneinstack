@@ -31,7 +31,7 @@ sed -i "s@^oneinstack_dir.*@oneinstack_dir=`pwd`@" ./options.conf
 # Check if user is root
 [ $(id -u) != "0" ] && { echo "${CFAILURE}Error: You must be root to run this script${CEND}"; exit 1; }
 
-mkdir -p $wwwroot_dir/default $wwwlogs_dir
+mkdir -p $wwwroot_dir/default $logswww_dir
 [ -d /data ] && chmod 755 /data
 
 # Use default SSH port 22. If you use another SSH port on your server
