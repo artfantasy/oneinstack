@@ -117,7 +117,7 @@ Choose_env() {
   fi
 
   if [ "$NGX_FLAG" == 'php' ]; then
-    NGX_CONF=$(echo -e "location ~ [^/]\.php(/|$) {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n    }")
+    NGX_CONF=$(echo -e "location ~ [^/]\.php(/|$) {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n    try_files \$uri =404;\n    }")
   elif [ "$NGX_FLAG" == 'java' ]; then
     NGX_CONF=$(echo -e "location ~ {\n    proxy_pass http://127.0.0.1:8080;\n    include proxy.conf;\n    }")
   elif [ "$NGX_FLAG" == 'hhvm' ]; then
@@ -402,7 +402,7 @@ Nginx_rewrite() {
   else
     echo
     echo "Please input the rewrite of programme :"
-    echo "${CMSG}wordpress${CEND},${CMSG}discuz${CEND},${CMSG}opencart${CEND},${CMSG}thinkphp${CEND},${CMSG}laravel${CEND},${CMSG}typecho${CEND},${CMSG}ecshop${CEND},${CMSG}drupal${CEND},${CMSG}joomla${CEND} rewrite was exist."
+    echo "${CMSG}wordpress${CEND},${CMSG}discuz${CEND},${CMSG}opencart${CEND},${CMSG}thinkphp${CEND},${CMSG}yii${CEND},${CMSG}laravel${CEND},${CMSG}typecho${CEND},${CMSG}ecshop${CEND},${CMSG}drupal${CEND},${CMSG}joomla${CEND} rewrite was exist."
     read -p "(Default rewrite: other):" rewrite
     if [ "$rewrite" == "" ]; then
       rewrite="other"
@@ -533,13 +533,12 @@ root $vhostdir;
 $Nginx_redirect
 $anti_hotlinking
 $NGX_CONF
-location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
-    expires 30d;
+location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico|js|css)$ {
+    expires max;
     access_log off;
     }
-location ~ .*\.(js|css)?$ {
-    expires 7d;
-    access_log off;
+location ~ /\.(ht|svn|git) {
+        deny all;
     }
 }
 EOF
