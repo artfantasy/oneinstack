@@ -117,7 +117,7 @@ Choose_env() {
   fi
 
   if [ "$NGX_FLAG" == 'php' ]; then
-    NGX_CONF=$(echo -e "location ~ [^/]\.php(/|$) {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n    try_files \$uri =404;\n    }")
+    NGX_CONF=$(echo -e "location ~ [^/]\.php(/|$) {\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi.conf;\n    try_files \$uri =404;\n}")
   elif [ "$NGX_FLAG" == 'java' ]; then
     NGX_CONF=$(echo -e "location ~ {\n    proxy_pass http://127.0.0.1:8080;\n    include proxy.conf;\n    }")
   elif [ "$NGX_FLAG" == 'hhvm' ]; then
@@ -148,8 +148,8 @@ If you enter '.', the field will be left blank.
   [ -z "$SELFSIGNEDSSL_L" ] && SELFSIGNEDSSL_L=Shanghai
   
   echo
-  read -p "Organization Name (eg, company) [LinuxEye Inc.]: " SELFSIGNEDSSL_O
-  [ -z "$SELFSIGNEDSSL_O" ] && SELFSIGNEDSSL_O='LinuxEye Inc.'
+  read -p "Organization Name (eg, company) [A Company.]: " SELFSIGNEDSSL_O
+  [ -z "$SELFSIGNEDSSL_O" ] && SELFSIGNEDSSL_O='A Company.'
   
   echo
   read -p "Organizational Unit Name (eg, section) [IT Dept.]: " SELFSIGNEDSSL_OU
@@ -340,12 +340,12 @@ Input_Add_domain() {
 
   while :; do echo
     echo "Please input the directory for the domain:$domain :"
-    read -p "(Default directory: $wwwroot_dir/$domain): " vhostdir
+    read -p "(Default directory: $wwwroot_dir/$domain/web): " vhostdir
     if [ -n "$vhostdir" -a -z "`echo $vhostdir | grep '^/'`" ]; then
       echo "${CWARNING}input error! Press Enter to continue...${CEND}"
     else
       if [ -z "$vhostdir" ]; then
-        vhostdir="$wwwroot_dir/$domain"
+        vhostdir="$wwwroot_dir/$domain/web"
         echo "Virtual Host Directory=${CMSG}$vhostdir${CEND}"
       fi
       echo
@@ -408,7 +408,7 @@ Nginx_rewrite() {
       rewrite="other"
     fi
     echo "You choose rewrite=${CMSG}$rewrite${CEND}"
-    [ "$NGX_FLAG" == 'php' -a "$rewrite" == "thinkphp" ] && NGX_CONF=$(echo -e "location ~ \.php {\n    #fastcgi_pass remote_php_ip:9000;\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi_params;\n    set \$real_script_name \$fastcgi_script_name;\n        if (\$fastcgi_script_name ~ \"^(.+?\.php)(/.+)\$\") {\n        set \$real_script_name \$1;\n        #set \$path_info \$2;\n        }\n    fastcgi_param SCRIPT_FILENAME \$document_root\$real_script_name;\n    fastcgi_param SCRIPT_NAME \$real_script_name;\n    #fastcgi_param PATH_INFO \$path_info;\n    }")
+    [ "$NGX_FLAG" == 'php' -a "$rewrite" == "thinkphp" ] && NGX_CONF=$(echo -e "location ~ \.php {\n    fastcgi_pass unix:/dev/shm/php-cgi.sock;\n    fastcgi_index index.php;\n    include fastcgi_params;\n    set \$real_script_name \$fastcgi_script_name;\n        if (\$fastcgi_script_name ~ \"^(.+?\.php)(/.+)\$\") {\n        set \$real_script_name \$1;\n        #set \$path_info \$2;\n        }\n    fastcgi_param SCRIPT_FILENAME \$document_root\$real_script_name;\n    fastcgi_param SCRIPT_NAME \$real_script_name;\n    #fastcgi_param PATH_INFO \$path_info;\n}")
     if [ -e "config/$rewrite.conf" ]; then
       /bin/cp config/$rewrite.conf $web_install_dir/conf/rewrite/$rewrite.conf
     else
@@ -533,13 +533,15 @@ root $vhostdir;
 $Nginx_redirect
 $anti_hotlinking
 $NGX_CONF
+
 location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico|js|css)$ {
     expires max;
     access_log off;
-    }
+}
+
 location ~ /\.(ht|svn|git) {
-        deny all;
-    }
+    deny all;
+}
 }
 EOF
 
